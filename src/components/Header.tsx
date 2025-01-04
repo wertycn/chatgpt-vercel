@@ -45,7 +45,7 @@ export default function Header() {
             fallback={
               <>
                 <span class="text-transparent font-extrabold bg-clip-text bg-gradient-to-r dark:from-yellow-300 from-yellow-600 dark:to-red-700 to-red-700 mr-1">
-                  ChatGPT 
+                  AI 对话搜索 
                 </span>
                 
               </>

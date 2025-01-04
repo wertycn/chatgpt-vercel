@@ -100,26 +100,12 @@ export default function MessageItem(props: Props) {
   }, 50)
 
   createEffect(() => {
-    const content = props.message.content
-    const type = props.message.type
-    
-    if (!content) return
-    
-    setRenderedMarkdown("")
-    
-    if (type === "temporary") {
-      throttleRender(content)
+    if (props.message.type === "temporary") {
+      throttleRender(props.message.content)
     } else {
-      let cancelled = false
-      renderMarkdownInWorker(content).then(html => {
-        if (!cancelled) {
-          setRenderedMarkdown(html)
-        }
+      renderMarkdownInWorker(props.message.content).then(html => {
+        setRenderedMarkdown(html)
       })
-      
-      return () => {
-        cancelled = true
-      }
     }
   })
 
