@@ -58,7 +58,7 @@ export const defaultMessage: ChatMessage = {
 
 const models = {
   "gpt-4o": {
-    "128k": "gpt-4o-2024-08-06"
+    "128k": "gpt-4o"
   },
   "gpt-4o-mini": {
     "128k": "gpt-4o-mini"
@@ -74,7 +74,7 @@ const modelFee = {
     input: 0.00015,
     output: 0.0006
   },
-  "gpt-4o-2024-08-06": {
+  "gpt-4o": {
     input: 0.0025,
     output: 0.01
   }
