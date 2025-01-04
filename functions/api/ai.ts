@@ -4,11 +4,13 @@ import { defaultEnv } from "../../shared/env"
 import { randomKey, splitKeys, fetchWithTimeout } from "../../server/utils"
 
 const timeout = 30000  // 30秒超时
-const localKey = process.env.OPENAI_API_KEY || ""
-const passwordSet = process.env.PASSWORD || defaultEnv.PASSWORD
 
 export async function onRequestPost(context) {
   try {
+    // 从 context.env 获取环境变量
+    const localKey = context.env.OPENAI_API_KEY || ""
+    const passwordSet = context.env.PASSWORD || defaultEnv.PASSWORD
+    
     const body = await context.request.json()
     const { messages, key = localKey, temperature, password, model } = body
 
