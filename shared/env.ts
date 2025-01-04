@@ -16,7 +16,7 @@ export const defaultEnv = {
     // 0-2
     APITemperature: 0.6,
     continuousDialogue: true,
-    model: "gpt-4o-mini" as SimpleModel
+    model: "gpt-4o" as SimpleModel
   },
   CLIENT_DEFAULT_MESSAGE: `Powered by Debug.ICU
 - 点击每条消息前的头像，可以锁定对话，作为角色设定。[查看更多使用技巧](https://github.com/ourongxing/chatgpt-vercel#使用技巧)。
