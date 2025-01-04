@@ -77,7 +77,7 @@ export default defineEventHandler(async event => {
     const decoder = new TextDecoder()
 
     const rawRes = await fetchWithTimeout(
-      `https://aigateway.debug.icu/v1/chat/completions`,
+      `https://search2ai.873781777.workers.dev/v1/chat/completions`,
       {
         headers: {
           "Content-Type": "application/json",
