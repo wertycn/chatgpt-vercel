@@ -7,6 +7,9 @@ import "highlight.js/styles/atom-one-dark.css"
 import { MetaProvider } from "@solidjs/meta"
 import { ParentProps } from "solid-js"
 import "uno.css"
+import { Component } from 'solid-js'
+import SearchBar from './components/SearchBar'
+import Chat from './components/Chat'
 
 const e = localStorage.getItem(LocalStorageKey.THEME) || ""
 const a = window.matchMedia("(prefers-color-scheme: dark)").matches
@@ -23,11 +26,16 @@ if (!Array.prototype.at) {
   }
 }
 
-export default function (props: ParentProps) {
+const App: Component = (props: ParentProps) => {
   return (
-    <MetaProvider>
-      <PrefixTitle />
-      {props.children}
-    </MetaProvider>
+    <div>
+      <MetaProvider>
+        <PrefixTitle />
+        <SearchBar />
+        {props.children}
+      </MetaProvider>
+    </div>
   )
 }
+
+export default App

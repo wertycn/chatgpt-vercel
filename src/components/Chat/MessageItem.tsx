@@ -9,6 +9,8 @@ import vercel from "~/icons/vercel.svg?raw"
 import type { FakeRoleUnion } from "./SettingAction"
 import { renderMarkdownInWorker } from "~/workers"
 import { throttle } from "@solid-primitives/scheduled"
+import userIcon from "/user.png"
+import chatgptIcon from "/chatgpt.svg?raw"
 
 interface Props {
   message: ChatMessage
@@ -24,8 +26,8 @@ export default function MessageItem(props: Props) {
   const roleClass = {
     error: "bg-gradient-to-r from-red-400 to-red-700",
     system: "bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300",
-    user: "bg-gradient-to-r from-red-300 to-blue-700 ",
-    assistant: "bg-gradient-to-r from-yellow-300 to-red-700 "
+    user: "",
+    assistant: ""
   }
 
   function copy() {
@@ -98,12 +100,26 @@ export default function MessageItem(props: Props) {
   }, 50)
 
   createEffect(() => {
-    if (props.message.type === "temporary") {
-      throttleRender(props.message.content)
+    const content = props.message.content
+    const type = props.message.type
+    
+    if (!content) return
+    
+    setRenderedMarkdown("")
+    
+    if (type === "temporary") {
+      throttleRender(content)
     } else {
-      renderMarkdownInWorker(props.message.content).then(html => {
-        setRenderedMarkdown(html)
+      let cancelled = false
+      renderMarkdownInWorker(content).then(html => {
+        if (!cancelled) {
+          setRenderedMarkdown(html)
+        }
       })
+      
+      return () => {
+        cancelled = true
+      }
     }
   })
 
@@ -119,16 +135,27 @@ export default function MessageItem(props: Props) {
         }}
       >
         <div
-          class={`shadow-slate-5 shadow-sm dark:shadow-none shrink-0 w-7 h-7 mt-4 rounded-full op-80 flex items-center justify-center cursor-pointer ${
-            roleClass[props.message.role]
-          }`}
+          class="shrink-0 w-7 h-7 mt-4 rounded-full flex items-center justify-center cursor-pointer"
           classList={{
             "animate-spin": props.message.type === "temporary"
           }}
           onClick={lockMessage}
         >
+          <Show 
+            when={props.message.role === "assistant"}
+            fallback={
+              <div class="w-[20px] h-[20px] flex items-center justify-center">
+                <img src={userIcon} class="w-full h-full rounded-full" alt="user" />
+              </div>
+            }
+          >
+            <div 
+              innerHTML={chatgptIcon} 
+              class="w-[20px] h-[20px] flex items-center justify-center icon-wrapper"
+            />
+          </Show>
           <Show when={props.message.type === "locked"}>
-            <div class="i-carbon:locked text-white" />
+            <div class="i-carbon:locked text-white absolute" />
           </Show>
         </div>
         <div

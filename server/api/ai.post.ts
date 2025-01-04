@@ -59,6 +59,7 @@ export default defineEventHandler(async event => {
       password?: string
       model: Model
     } = await readBody(event).then(JSON.parse)
+    console.log('请求体:', body)  
     const { messages, key = localKey, temperature, password, model } = body
 
     if (passwordSet && password !== passwordSet) {
@@ -77,7 +78,7 @@ export default defineEventHandler(async event => {
     const decoder = new TextDecoder()
 
     const rawRes = await fetchWithTimeout(
-      `https://search2ai.873781777.workers.dev/v1/chat/completions`,
+      `https://search.awsv.cn/v1/chat/completions`,
       {
         headers: {
           "Content-Type": "application/json",
