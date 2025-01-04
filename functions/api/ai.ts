@@ -1,4 +1,4 @@
-import { createParser } from "eventsource-parser"
+import { createParser, type ParsedEvent, type ReconnectInterval } from "eventsource-parser"
 import type { ChatMessage, Model } from "../../shared/types"
 import { defaultEnv } from "../../shared/env"
 import { randomKey, splitKeys, fetchWithTimeout } from "../../server/utils"
@@ -46,8 +46,43 @@ export async function onRequestPost(context) {
       }
     )
 
-    // 返回流式响应
-    return new Response(response.body, {
+    const encoder = new TextEncoder()
+    const decoder = new TextDecoder()
+
+    if (!response.ok) {
+      return new Response(response.body, {
+        status: response.status,
+        statusText: response.statusText
+      })
+    }
+
+    const stream = new ReadableStream({
+      async start(controller) {
+        const streamParser = (event: ParsedEvent | ReconnectInterval) => {
+          if (event.type === "event") {
+            const data = event.data
+            if (data === "[DONE]") {
+              controller.close()
+              return
+            }
+            try {
+              const json = JSON.parse(data)
+              const text = json.choices[0].delta?.content
+              const queue = encoder.encode(text)
+              controller.enqueue(queue)
+            } catch (e) {
+              controller.error(e)
+            }
+          }
+        }
+        const parser = createParser(streamParser)
+        for await (const chunk of response.body as any) {
+          parser.feed(decoder.decode(chunk))
+        }
+      }
+    })
+
+    return new Response(stream, {
       headers: {
         'Content-Type': 'text/event-stream',
         'Cache-Control': 'no-cache',
